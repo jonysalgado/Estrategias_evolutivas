@@ -1,14 +1,12 @@
-import sys
-sys.path.insert(0, '/Player')
-sys.path.insert(1, '/Simulation')
-
 from Constants.constants import *
 from utils import Pose
 from Player.player import Player
 from Simulation.simulation import *
-from Simulation.matrix_collision import drawBackgroundImage
+from Simulation.matrix_collision import drawBackgroundImage, matrixCollision
 from Player.state_machine import FiniteStateMachine, MoveForwardState
+from Simulation.keyboard import Keyboard
 import numpy as np
+
 
 
 pygame.init()
@@ -20,28 +18,51 @@ clock = pygame.time.Clock()
 pygame.display.set_icon(icon)
 
 behavior = FiniteStateMachine(MoveForwardState())
-pose = Pose(PIX2M * SCREEN_WIDTH/3, PIX2M * SCREEN_HEIGHT/2, 0)
+pose = Pose(PIX2M * 932, PIX2M * 435, -pi/2)
 player = np.array([Player(pose, 1.0, 2.0, behavior, 0)])
 simulation = Simulation(player)
-
-# collision array
-collision_array = drawBackgroundImage(window)
 
 # cars
 cars = []
 for i in range(7):
     cars.append(pygame.image.load("./Img/carro"+str(i)+".png"))
 
+# collision array
+scale = 1
+position = (0,0)
+mapParameters = [scale, position]
+carsParameters = []
+drawBackgroundImage(simulation, window, mapParameters, cars, None, True)
+collision_array = matrixCollision(window)
 
+simulation.set_collisionArray(collision_array)
+
+
+# user = input("Deseja jogar também?(y/n)")
+# while user not in ['y', 'Y', 'n', 'N']:
+#     user = input("Deseja jogar também?(y/n)")
+
+# remove after
+user = 'y'
 run = True
+key = None
 while run:
     clock.tick(FREQUENCY)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    draw(simulation, window, collision_array, cars)
-    # simulation.update()
+
+        if event.type == pygame.KEYDOWN:
+            mapParameters, carsParameters = Keyboard(event.key, mapParameters, carsParameters)
+        else:
+            key = None
+    if key == None:
+        mapParameters, carsParameters = Keyboard(key, mapParameters, carsParameters)
+    if user in ['n', 'N']:
+        carsParameters = None
+    draw(simulation, window, cars, mapParameters)
+    simulation.update(carsParameters)
 
 
 pygame.quit()

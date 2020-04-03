@@ -1,4 +1,5 @@
 import math
+from Constants.constants import M2PIX
 
 def clamp(value, min, max):
     """
@@ -86,4 +87,27 @@ class TransformPolar(object):
             self.rotation = -1*math.pi
         if x < 0:
             self.rotation += math.pi
+
+
+class function_linear(object):
+
+    def __init__(self, total_angle, centerPos):
+        self.total_angle = total_angle
+        self.centerPos = centerPos
+        self.a, self.b = self.calcAB()
+        # print("a,b, total:",self.a,self.b, self.total_angle)
+
+    def calcAB(self):
+        y0 = round(self.centerPos.position.y  * M2PIX)
+        x0 = round(self.centerPos.position.x  * M2PIX)
+        a = math.tan(self.total_angle)
+        b = y0 - a*x0
+        return a, b
+    
+    def y(self, x):
+        return self.a*x + self.b
+
+    def x(self, y):
+        return (y - self.b)/self.a
+
         

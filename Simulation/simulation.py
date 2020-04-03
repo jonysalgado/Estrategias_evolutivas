@@ -4,6 +4,7 @@ from pygame.gfxdraw import pie
 from math import sin, cos, sqrt
 from Constants.constants import *
 from utils import *
+from Simulation.matrix_collision import drawBackgroundImage
 
 
 class Simulation(object):
@@ -20,6 +21,12 @@ class Simulation(object):
         self.point_list = []
         self.player = player
         self.number_players = len(player)
+        self.collision_array = None
+
+    def set_collisionArray(self, collision_array):
+
+        self.collision_array = collision_array
+        self.player[0].set_collision_array(collision_array)
 
     # def check_collision(self):
     #     """
@@ -42,32 +49,36 @@ class Simulation(object):
     #     """
 
 
-    # def update(self):
-    #     """
-    #     Updates the simulation.
-    #     """
-    #     # Adding roomba's current position to the movement history
-    #     # self.point_list.append((round(M2PIX * self.player[NUM_1].pose.position.x), round(M2PIX * self.player[NUM_1].pose.position.y)))
-    #     # if len(self.point_list) > 2000:
-    #     #     self.point_list.pop(0)
-    #     # Verifying collision
+    def update(self, carsParameters):
+        """
+        Updates the simulation.
+        """
+        self.player[0].update(carsParameters)
+        # Adding roomba's current position to the movement history
+        # self.point_list.append((round(M2PIX * self.player[NUM_1].pose.position.x), round(M2PIX * self.player[NUM_1].pose.position.y)))
+        # if len(self.point_list) > 2000:
+        #     self.point_list.pop(0)
+        # Verifying collision
         
         
 
-    def draw(self, window, cars):
+    def draw(self, window, cars, mapParameters):
         """
         Draws the roomba and its movement history.
 
         :param window: pygame's window where the drawing will occur.
         """
-        cars[0] = pygame.transform.scale(cars[0], (CARS_HEIGHT, CARS_WIDTH))
-        # cars[0] = pygame.transform.rotate(cars[0], 90)  
-        window.blit(cars[0], (0,0))
+        
+        
+        # draw map
+        scale = 1
+        position = (0,0)
+        drawBackgroundImage(self, window, mapParameters, cars, self.collision_array)
         
 
     
 
-def draw(simulation, window, collision_array, cars):
+def draw(simulation, window, cars, mapParameters):
     """
     Redraws the pygame's window.
 
@@ -75,8 +86,8 @@ def draw(simulation, window, collision_array, cars):
     :param window: pygame's window where the drawing will occur.
     """
     
-
-    simulation.draw(window, cars)
+    # print(simulation.player[0].pose.rotation)
+    simulation.draw(window, cars, mapParameters)
     pygame.display.update()
 
 
