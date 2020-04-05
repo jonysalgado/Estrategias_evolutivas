@@ -87,7 +87,7 @@ class Scenario(object):
         distance = "Melhor distância: "
         textsurface = font.render(distance, False, (255, 255, 255))
         self.window.blit(textsurface, (15,240))
-        distance = str(self.simulation.better_distance * 8.75) + " m"
+        distance = str(self.simulation.better_distance * M2PIX) + " pix"
         textsurface = font.render(distance, False, (255, 255, 255))
         self.window.blit(textsurface, (140,265))
 
