@@ -42,7 +42,7 @@ class Sensors(object):
                 distance = sqrt((point[0]-centerX)**2 + (point[1]-centerY)**2)
             else:
                 distance = 0
-                point = (0,0)
+                point = (centerX,centerY)
             return point, distance
         
         elif fabs(self.normalAngle(totalAngle) - 3*pi/2) < 1.0e-3:
@@ -51,7 +51,7 @@ class Sensors(object):
                 distance = sqrt((point[0]-centerX)**2 + (point[1]-centerY)**2)
             else:
                 distance = 0
-                point = (0,0)
+                point = (centerX,centerY)
             return point, distance
 
         elif cos(self.normalAngle(totalAngle)) > 0:
@@ -60,7 +60,7 @@ class Sensors(object):
                 distance = sqrt((point[0]-centerX)**2 + (point[1]-centerY)**2)
             else:
                 distance = 0
-                point = (0,0)
+                point = (centerX,centerY)
             return point, distance
         
         elif cos(self.normalAngle(totalAngle)) < 0:
@@ -69,7 +69,7 @@ class Sensors(object):
                 distance = sqrt((point[0]-centerX)**2 + (point[1]-centerY)**2)
             else:
                 distance = 0
-                point = (0,0)
+                point = (centerX,centerY)
             return point, distance
 
 
@@ -114,6 +114,12 @@ class Sensors(object):
 
     def is_index_valid(self, i, j):
         return 0 <= i < SCREEN_WIDTH and 0 <= j < SCREEN_HEIGHT
+
+    def update(self, center_player):
+
+        self.centerPose = center_player
+
+        
 
 
 

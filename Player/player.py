@@ -9,7 +9,7 @@ class Player(object):
     Represents a roomba cleaning robot.
     """
 
-    def __init__(self, pose, max_linear_speed, max_angular_speed, behavior, number):
+    def __init__(self, pose, max_linear_speed, max_angular_speed, number):
         """
         Creates a roomba cleaning robot.
 
@@ -31,10 +31,11 @@ class Player(object):
         self.max_linear_speed = max_linear_speed
         self.max_angular_speed = max_angular_speed
         self.bumper_state = False
-        self.behavior = behavior
         self.number = number
         self.collision_array = None
         self.sensors = None
+        self.animationFrame = 1
+        self.controllable = False
 
     def initialSensors(self):
         sensors = []
@@ -87,26 +88,30 @@ class Player(object):
         dt = SAMPLE_TIME
         v = self.linear_speed
         w = self.angular_speed
-        # If the angular speed is too low, the complete movement equation fails due to a division by zero.
-        # Therefore, in this case, we use the equation we arrive if we take the limit when the angular speed
-        # is close to zero.
-        if fabs(self.angular_speed) < 1.0e-3:
-            self.pose.position.x += v * dt * \
-                cos(self.pose.rotation + w * dt / 2.0)
-            self.pose.position.y += v * dt * \
-                sin(self.pose.rotation + w * dt / 2.0)
+
+        if self.bumper_state == True:
+            self.set_velocity(0,0)
         else:
-            self.pose.position.x += (2.0 * v / w) * \
-                cos(self.pose.rotation + w * dt / 2.0) * sin(w * dt / 2.0)
-            self.pose.position.y += (2.0 * v / w) * \
-                sin(self.pose.rotation + w * dt / 2.0) * sin(w * dt / 2.0)
-        self.pose.rotation += w * dt
-        # print(self.pose.rotation)
+            # If the angular speed is too low, the complete movement equation fails due to a division by zero.
+            # Therefore, in this case, we use the equation we arrive if we take the limit when the angular speed
+            # is close to zero.
+            if fabs(self.angular_speed) < 1.0e-3:
+                self.pose.position.x += v * dt * \
+                    cos(self.pose.rotation + w * dt / 2.0)
+                self.pose.position.y += v * dt * \
+                    sin(self.pose.rotation + w * dt / 2.0)
+            else:
+                self.pose.position.x += (2.0 * v / w) * \
+                    cos(self.pose.rotation + w * dt / 2.0) * sin(w * dt / 2.0)
+                self.pose.position.y += (2.0 * v / w) * \
+                    sin(self.pose.rotation + w * dt / 2.0) * sin(w * dt / 2.0)
+            self.pose.rotation += w * dt
 
     def userController(self, carsParameters):
 
         self.set_velocity(0, 0)
-        if len(carsParameters) != 0:
+        if len(carsParameters) != 0 and self.number == 0:
+            self.controllable = True
             command = carsParameters.pop(0)
 
             if command == 'up':
@@ -121,9 +126,9 @@ class Player(object):
 
     def update(self, carsParameters):
         """
-        Updates the robot, including its behavior.
+        Updates the robot.
         """
-        # self.behavior.update(self)
+
         if carsParameters != None:
             self.userController(carsParameters)
         self.move()
