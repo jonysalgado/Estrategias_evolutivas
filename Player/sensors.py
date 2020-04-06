@@ -1,4 +1,4 @@
-from utils import Pose, function_linear
+from Utils.utils import Pose, function_linear
 from math import pi, fabs, sqrt, cos
 from Constants.constants import SCREEN_WIDTH, SCREEN_HEIGHT, M2PIX
 import matplotlib.pyplot as plt

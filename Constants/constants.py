@@ -11,7 +11,7 @@ M2PIX = 100.0  # factor to convert from meters to pixels
 RAD2DEGREE = 180/pi
 
 # Sample Time Parameters
-FREQUENCY = 60.0  # simulation frequency
+FREQUENCY = 30.0  # simulation frequency
 SAMPLE_TIME = 1.0 / FREQUENCY  # simulation sample time
 
 # colors
@@ -52,3 +52,7 @@ KEY_UP = 273
 KEY_DOWN = 274
 KEY_LEFT = 276
 KEY_RIGHT = 275
+
+
+# Neural network
+NEURAL_SIZE = [14, 4, 1, 4]

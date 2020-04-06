@@ -1,5 +1,5 @@
 from Constants.constants import *
-from utils import Pose
+from Utils.utils import Pose
 from Player.player import Player
 from Simulation.simulation import *
 from Simulation.Scenario import Scenario
@@ -18,8 +18,8 @@ pygame.display.set_icon(icon)
 
 # init players
 players = []
-for i in range(7):
-    pose = Pose(PIX2M * round(907 + i*65/7), PIX2M * 435, -pi/2)
+for i in range(100):
+    pose = Pose(PIX2M * round(907 + i*65/100), PIX2M * 435, -pi/2)
     players.append(Player(pose, FORWARD_SPEED,ANGULAR_SPEED, i))
 
 player = np.array(players)
@@ -27,8 +27,8 @@ player = np.array(players)
 simulation = Simulation(player)
 # cars
 cars = []
-for i in range(7):
-    cars.append(pygame.image.load("./Img/carro"+str(i)+".png"))
+for i in range(100):
+    cars.append(pygame.image.load("./Img/carro"+str(i%7)+".png"))
 
 # collision array
 scale = 1

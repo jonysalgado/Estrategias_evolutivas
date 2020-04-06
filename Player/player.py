@@ -1,6 +1,6 @@
 from math import sin, cos, fabs
 from Constants.constants import *
-from utils import *
+from Utils.utils import *
 from Player.sensors import Sensors
 
 
@@ -107,10 +107,25 @@ class Player(object):
                     sin(self.pose.rotation + w * dt / 2.0) * sin(w * dt / 2.0)
             self.pose.rotation += w * dt
 
+    def networkController(self, output):
+        # print(output[0][0])
+        self.set_velocity(0, 0)
+        # move forward
+        if output[0][0] > 0.5:
+            self.set_velocity(FORWARD_SPEED, 0)
+            # print('ok')
+        if output[1][0] > 0.5:
+            self.set_velocity(BACKWARD_SPEED, 0)
+        if output[2][0] > 0.5:
+            self.set_velocity(0, -ANGULAR_SPEED)
+        if output[3][0] > 0.5:
+            self.set_velocity(0, ANGULAR_SPEED)
+
+
     def userController(self, carsParameters):
 
-        self.set_velocity(0, 0)
         if len(carsParameters) != 0 and self.number == 0:
+            self.set_velocity(0, 0)
             self.controllable = True
             command = carsParameters.pop(0)
 

@@ -3,8 +3,9 @@ from pygame.rect import Rect
 from pygame.gfxdraw import pie
 from math import sin, cos, sqrt
 from Constants.constants import *
-from utils import *
+from Utils.utils import *
 from Simulation.Scenario import Scenario
+from Reural_network.main_neural import main_neural
 import datetime
 
 
@@ -24,15 +25,17 @@ class Simulation(object):
         self.number_players = len(player)
         self.collision_array = None
         self.scenario = None
-        self.simulationTime = datetime.datetime.now()
+        self.simulationTime = 0
         self.generation = 1
         self.better_distance = 0
+        self.Neural_network = main_neural(self.player)
+        self.betterPlayer = 0
         
 
 
     def resetTime(self):
         
-        self.simulationTime = datetime.datetime.now()
+        self.simulationTime = 0
 
 
     def initScenario(self, window, mapParameters, cars):
@@ -59,29 +62,35 @@ class Simulation(object):
         for i in range(self.number_players):
             x0 = M2PIX * self.player[i].pose.position.x
             y0 = M2PIX * self.player[i].pose.position.y
+            distance = PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x0), round(y0)])
+            x1 = M2PIX * self.player[self.betterPlayer].pose.position.x
+            y1 = M2PIX * self.player[self.betterPlayer].pose.position.y
+            betterDistance = PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x1), round(y1)])
+            if distance > betterDistance:
+                self.betterPlayer = i
+            
             for di in range(-1, 2):
                 for dj in range(-1, 2):
                     if self.is_index_valid(round(x0) + di, round(y0) + dj):
                         if self.collision_array[round(x0) + di, round(y0) + dj] == 0:
                             self.player[i].set_bumper_state(True)
             
-            if 26.27 >= PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x0), round(y0)]) > self.better_distance:
+            
+
+            if 26.27 >= distance > self.better_distance:
                 self.better_distance =  PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x0), round(y0)])
 
     
     def burntCarTime(self):
-        self.scenario.cost_array
-        now = datetime.datetime.now()
  
-        if (now - self.simulationTime).seconds%2 == 0:
-            for i in range(self.number_players):
-                x0 = M2PIX * self.player[i].pose.position.x
-                y0 = M2PIX * self.player[i].pose.position.y
-                cost = self.scenario.cost_array[round(x0), round(y0)]
-                cost_limit = COST_START - 17 * (now - self.simulationTime).seconds
+        for i in range(self.number_players):
+            x0 = M2PIX * self.player[i].pose.position.x
+            y0 = M2PIX * self.player[i].pose.position.y
+            cost = self.scenario.cost_array[round(x0), round(y0)]
+            cost_limit = COST_START - self.simulationTime * 5
 
-                if cost_limit <= cost:
-                    self.player[i].set_bumper_state(True)
+            if cost_limit <= cost:
+                self.player[i].set_bumper_state(True)
 
 
         
@@ -94,10 +103,11 @@ class Simulation(object):
         for i in range(self.number_players):
             if self.player[i].bumper_state == False:
                 restart = False
-        
+
         if restart == True:
-            for i in range(7):
-                self.player[i].pose = Pose(PIX2M * round(907 + i*65/7), PIX2M * 435, -pi/2)
+            self.Neural_network.resetNetworks(self.betterPlayer)
+            for i in range(self.number_players):
+                self.player[i].pose = Pose(PIX2M * round(907 + i*65/self.number_players), PIX2M * 435, -pi/2)
                 self.player[i].set_bumper_state(False)
                 
                 for j in range(12):
@@ -121,6 +131,11 @@ class Simulation(object):
         self.burntCarTime()
         # restart game
         self.restart_game()
+
+        # Neural network
+        self.Neural_network.updatePlayers()
+
+        self.simulationTime += 1
         
         
 
@@ -132,6 +147,9 @@ class Simulation(object):
         """
         
         self.scenario.drawBackgroundImage()
+        x = M2PIX * self.player[self.betterPlayer].pose.position.x
+        y = M2PIX * self.player[self.betterPlayer].pose.position.y
+        # pygame.draw.circle(self.scenario.window, COLOR_WHITE, (round(x),round(y)), 10, 0)
         
 
     

@@ -1,4 +1,3 @@
-# from simulation import *
 import pygame
 from pygame.rect import Rect
 from pygame.gfxdraw import pie
@@ -52,17 +51,16 @@ class Scenario(object):
                         self.drawSensors(self.simulation.player[i].sensors, (x,y), sensorPoint)
                     self.window.blit(car_rotate, (x-car_rotate.get_rect().center[0], y-car_rotate.get_rect().center[1]))
                 else:
-                    explosion = []
-                    if self.simulation.player[i].animationFrame != 45:
-                        for j in range(1, 45):
-                            explosion.append(pygame.image.load("./Img/explosion/exp (" + str(j) + ").png"))
-                            explosion[j-1] = pygame.transform.scale(explosion[j-1], (200, 200))
-
+                    # explosion = []
+                    # if self.simulation.player[i].animationFrame != 45:
+                    #     for j in range(1, 45):
+                    #         explosion.append(pygame.image.load("./Img/explosion/exp (" + str(j) + ").png"))
+                    #         explosion[j-1] = pygame.transform.scale(explosion[j-1], (200, 200))
                     burntCar = pygame.transform.rotate(burntCar, round(-self.simulation.player[i].pose.rotation * RAD2DEGREE)%360)
                     self.window.blit(burntCar, (x-burntCar.get_rect().center[0], y-burntCar.get_rect().center[1]))
-                    if self.simulation.player[i].animationFrame < 45:
-                        self.window.blit(explosion[self.simulation.player[i].animationFrame - 1], (x-100, y-100))
-                        self.simulation.player[i].animationFrame += 1
+                    # if self.simulation.player[i].animationFrame < 45:
+                    #     # self.window.blit(explosion[self.simulation.player[i].animationFrame - 1], (x-100, y-100))
+                    #     self.simulation.player[i].animationFrame += 1
 
         self.drawScore()
         windowScale = pygame.transform.scale(pygame.display.get_surface(), (SCREEN_WIDTH * self.mapParameters[0], SCREEN_HEIGHT * self.mapParameters[0]))
@@ -89,12 +87,12 @@ class Scenario(object):
         self.window.blit(textsurface, (15,240))
         distance = str(self.simulation.better_distance * M2PIX) + " pix"
         textsurface = font.render(distance, False, (255, 255, 255))
-        self.window.blit(textsurface, (140,265))
+        self.window.blit(textsurface, (100,265))
 
-        if self.simulation.better_distance >= (INITIAL_DISTANCE - 1) * PIX2M:
+        if self.simulation.better_distance >= (INITIAL_DISTANCE - 2) * PIX2M:
             conclusion = "Eu aprendi a dirigir, Jony!"
             textsurface = font.render(conclusion, False, (255, 255, 255))
-            self.window.blit(textsurface, (15,400))
+            self.window.blit(textsurface, (15,300))
 
     def matrixCollision(self):
         pxarray = pygame.PixelArray(self.window)
