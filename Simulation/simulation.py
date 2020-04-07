@@ -6,8 +6,7 @@ from Constants.constants import *
 from Utils.utils import *
 from Simulation.Scenario import Scenario
 from Reural_network.main_neural import main_neural
-import datetime
-
+import numpy as np
 
 class Simulation(object):
     """
@@ -30,8 +29,17 @@ class Simulation(object):
         self.better_distance = 0
         self.Neural_network = main_neural(self.player)
         self.betterPlayer = 0
-        
+        self.distancePlayers = np.zeros(self.number_players, dtype=float)
 
+    def sortDistance(self):
+        array = []
+        for i in range(self.number_players):
+            array.append((i, self.distancePlayers[i]))
+
+        distance = np.array(array, dtype=[('car', int), ('distance', float)])
+        
+        distance = np.sort(distance, order='distance')
+        return distance[::-1]
 
     def resetTime(self):
         
@@ -63,11 +71,19 @@ class Simulation(object):
             x0 = M2PIX * self.player[i].pose.position.x
             y0 = M2PIX * self.player[i].pose.position.y
             distance = PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x0), round(y0)])
+            if self.is_index_valid(round(x0), round(y0)):
+                if self.scenario.cost_array[round(x0), round(y0)] == -1:
+                    distance = self.distancePlayers[i]
+            else:
+                distance = self.distancePlayers[i]
             x1 = M2PIX * self.player[self.betterPlayer].pose.position.x
             y1 = M2PIX * self.player[self.betterPlayer].pose.position.y
             betterDistance = PIX2M * (INITIAL_DISTANCE -  self.scenario.cost_array[round(x1), round(y1)])
             if distance > betterDistance:
                 self.betterPlayer = i
+
+            self.distancePlayers[i] = distance
+            
             
             for di in range(-1, 2):
                 for dj in range(-1, 2):
@@ -105,12 +121,16 @@ class Simulation(object):
                 restart = False
 
         if restart == True:
-            self.Neural_network.resetNetworks(self.betterPlayer)
+            distance = self.sortDistance()
+            print('Melhor geração:\n', distance[:5])
+            self.Neural_network.resetNetworks(distance)
             for i in range(self.number_players):
-                self.player[i].pose = Pose(PIX2M * round(907 + i*65/self.number_players), PIX2M * 435, -pi/2)
+                rand = np.random.randint(0, self.number_players)
+                self.player[i].pose = Pose(PIX2M * round(907 + rand*65/self.number_players), PIX2M * 435, -pi/2)
                 self.player[i].set_bumper_state(False)
+                self.player[i].distance = 0
                 
-                for j in range(12):
+                for j in range(N_SENSORS):
                     self.player[i].sensors[j].update(self.player[i].pose)
 
             self.generation += 1

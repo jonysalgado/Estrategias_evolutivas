@@ -5,6 +5,8 @@ from Simulation.simulation import *
 from Simulation.Scenario import Scenario
 from Simulation.keyboard import Keyboard
 import numpy as np
+# pegartempo
+import time
 
 
 
@@ -18,16 +20,16 @@ pygame.display.set_icon(icon)
 
 # init players
 players = []
-for i in range(100):
-    pose = Pose(PIX2M * round(907 + i*65/100), PIX2M * 435, -pi/2)
-    players.append(Player(pose, FORWARD_SPEED,ANGULAR_SPEED, i))
+for i in range(N_PLAYERS):
+    pose = Pose(PIX2M * round(907 + i*65/N_PLAYERS), PIX2M * 435, -pi/2)
+    players.append(Player(pose, 3 * FORWARD_SPEED, 3 * ANGULAR_SPEED, i))
 
 player = np.array(players)
 
 simulation = Simulation(player)
 # cars
 cars = []
-for i in range(100):
+for i in range(N_PLAYERS):
     cars.append(pygame.image.load("./Img/carro"+str(i%7)+".png"))
 
 # collision array
@@ -46,6 +48,8 @@ while user not in ['y', 'Y', 'n', 'N']:
 run = True
 key = None
 while run:
+    # pegartempo
+    init = time.time()
     clock.tick(FREQUENCY)
 
     for event in pygame.event.get():
@@ -62,6 +66,9 @@ while run:
         carsParameters = []
     draw(simulation)
     simulation.update(carsParameters)
+    # fim = time.time()
+    # pegartempo
+    # print(init - fim)
 
 
 pygame.quit()

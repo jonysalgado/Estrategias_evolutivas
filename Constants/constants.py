@@ -9,6 +9,8 @@ SCREEN_HEIGHT = 650
 PIX2M = 0.01  # factor to convert from pixels to meters
 M2PIX = 100.0  # factor to convert from meters to pixels
 RAD2DEGREE = 180/pi
+N_PLAYERS = 500
+N_SENSORS = 11
 
 # Sample Time Parameters
 FREQUENCY = 30.0  # simulation frequency
@@ -25,14 +27,14 @@ COLOR_YELLOW = (255, 255, 0)
 
 
 # cars dimensions
-CARS_WIDTH = 18
-CARS_HEIGHT = 35
+CARS_WIDTH = 14
+CARS_HEIGHT = 30
 
 # sensor dimension
 SENSOR_HEIGHT = CARS_HEIGHT - 10
 
 # Move Parameters
-FORWARD_SPEED = 3.0
+FORWARD_SPEED = 2.0
 BACKWARD_SPEED = -1.0
 ANGULAR_SPEED = 2.0
 
@@ -55,4 +57,5 @@ KEY_RIGHT = 275
 
 
 # Neural network
-NEURAL_SIZE = [14, 4, 1, 4]
+NEURAL_SIZE = [N_SENSORS + 2, 4, 4]
+ELITISM_RATE = 0.01

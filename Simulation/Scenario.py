@@ -70,7 +70,7 @@ class Scenario(object):
 
     def drawSensors(self, sensors, centerPos, sensorPoint):
         if self.simulation.player[0].controllable != False:
-            for i in range(12):
+            for i in range(N_SENSORS):
                 pygame.draw.line(self.window, COLOR_SENSOR, sensors[i].distance()[0], centerPos, 1)
                 center = sensors[i].distance()[0]
                 self.window.blit(sensorPoint, (center[0] - SENSOR_HEIGHT/2, center[1] - SENSOR_HEIGHT/2))

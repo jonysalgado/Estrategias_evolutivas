@@ -36,10 +36,11 @@ class Player(object):
         self.sensors = None
         self.animationFrame = 1
         self.controllable = False
+        self.distance = 0
 
     def initialSensors(self):
         sensors = []
-        for i in range(12):
+        for i in range(N_SENSORS):
             sensors.append(Sensors(self.collision_array, self.pose, i))
 
         self.sensors = sensors
@@ -109,17 +110,16 @@ class Player(object):
 
     def networkController(self, output):
         # print(output[0][0])
-        self.set_velocity(0, 0)
         # move forward
-        if output[0][0] > 0.5:
-            self.set_velocity(FORWARD_SPEED, 0)
+        if output[0] > 0.5:
+            self.set_velocity(self.linear_speed + FORWARD_SPEED, self.angular_speed)
             # print('ok')
-        if output[1][0] > 0.5:
-            self.set_velocity(BACKWARD_SPEED, 0)
-        if output[2][0] > 0.5:
-            self.set_velocity(0, -ANGULAR_SPEED)
-        if output[3][0] > 0.5:
-            self.set_velocity(0, ANGULAR_SPEED)
+        if output[1] > 0.5:
+            self.set_velocity(self.linear_speed - BACKWARD_SPEED, self.angular_speed)
+        if output[2] > 0.5:
+            self.set_velocity(self.linear_speed, self.angular_speed-ANGULAR_SPEED)
+        if output[3] > 0.5:
+            self.set_velocity(self.linear_speed, self.angular_speed+ANGULAR_SPEED)
 
 
     def userController(self, carsParameters):
